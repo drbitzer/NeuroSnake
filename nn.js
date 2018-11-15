@@ -24,7 +24,7 @@ class NeuralNetwork {
 
             this.bias_h = inputNodes.bias_h.copy();
             this.bias_o = inputNodes.bias_o.copy();
-        } else {
+        } else if(inputNodes) {
             this.inputNodes = inputNodes;
             this.hiddenNodes = hiddenNodes;
             this.outputNodes = outputNodes;

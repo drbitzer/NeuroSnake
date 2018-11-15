@@ -19,8 +19,12 @@ class Snake {
         this.canvasWidth = canvasWidth;
         this.unit = unit;
 
-        this.XSTART = floor(random(this.unit, (this.canvasWidth - 20) / this.unit)) * this.unit;
-        this.YSTART = floor(random(this.unit, (this.canvasHeight - 20) / this.unit)) * this.unit;
+        //this.XSTART = floor(random(this.unit, (this.canvasWidth - 20) / this.unit)) * this.unit;
+        //this.YSTART = floor(random(this.unit, (this.canvasHeight - 20) / this.unit)) * this.unit;
+        this.XSTART = (Math.random() * (this.canvasWidth - (2 * this.unit))) + this.unit;
+        this.YSTART = (Math.random() * (this.canvasHeight - (2 * this.unit))) + this.unit;
+        this.XSTART = this.XSTART - (this.XSTART % this.unit);
+        this.YSTART = this.YSTART - (this.YSTART % this.unit);
         this.PART_SIZE = 10;
 
         this.numSegments = 10;
@@ -46,7 +50,7 @@ class Snake {
         if (snake) {
             this.brain = snake.brain.copy();
         } else {
-            this.brain = new NeuralNetwork(10, 6, 3);
+            this.brain = new NeuralNetwork(11, 7, 3);
         }
         
         this.apple = null;
@@ -249,8 +253,12 @@ class Snake {
         if (bodyRight)
             bodyRight = 1 / bodyRight;
 
+        let currentLength = 1 / this.numSegments;
+
+        
+
         let prediction = [];
-        prediction = this.brain.feedForward([directionInput, aheadBorderDist, leftBorderDist, rightBorderDist, appleAhead, appleLeft, appleRight, bodyAhead, bodyLeft, bodyRight]);
+        prediction = this.brain.feedForward([directionInput, aheadBorderDist, leftBorderDist, rightBorderDist, appleAhead, appleLeft, appleRight, bodyAhead, bodyLeft, bodyRight, currentLength]);
         
         let probability = 0;
         index = 0;

@@ -11,8 +11,10 @@ class Apple{
     }
 
     spawn() {
-        this.x = floor(random(this.unit, (this.canvasWidth - 20) / this.unit)) * this.unit;
-        this.y = floor(random(this.unit, (this.canvasHeight - 20) / this.unit)) * this.unit;        
+        this.x = (Math.random() * (this.canvasWidth - (2 * this.unit))) + this.unit;
+        this.x = this.x - (this.x % this.unit);
+        this.y = (Math.random() * (this.canvasHeight - (2 * this.unit))) + this.unit;
+        this.y = this.y - (this.y % this.unit);
     }
 
     update() {
