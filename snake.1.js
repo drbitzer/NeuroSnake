@@ -136,7 +136,7 @@ class Snake {
             appleWest = 1;
         index = yCorSave.findIndex(element => { return element == snakeHeadY });
         if (this.xCor[index] < snakeHeadX)
-            bodyWest = 1 / (snakeHeadX - this.xCor[index]);  
+            bodyWest = 1/ (snakeHeadX - this.xCor[index]);  
 		
 		
 		let appleNE = 0;
@@ -187,28 +187,28 @@ class Snake {
 		}		
             
         if (borderNorth == Infinity)
-            borderNorth = 1;        
+            borderNorth = 100;        
 
         if (bodyNorth == Infinity)
-            bodyNorth = 1;
+            bodyNorth = 100;
 
         if (borderEast == Infinity)
-            borderEast = 1;
+            borderEast = 100;
 
         if (bodyEast == Infinity)
-            bodyEast = 1;            
+            bodyEast = 100;            
 
         if (borderSouth == Infinity)
-            borderSouth = 1;
+            borderSouth = 100;
 
         if (bodySouth == Infinity)
-            bodySouth = 1;   
+            bodySouth = 100;   
             
         if (borderWest == Infinity)
-            borderWest = 1;
+            borderWest = 100;
 
         if (bodyWest == Infinity)
-            bodyWest = 1;           
+            bodyWest = 100;           
 
         let prediction = [];
         prediction = this.brain.feedForward([borderNorth, appleNorth, bodyNorth,
