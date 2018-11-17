@@ -50,7 +50,7 @@ class Snake {
         if (snake) {
             this.brain = snake.brain.copy();
         } else {
-            this.brain = new NeuralNetwork(12, 8, 4);
+            this.brain = new NeuralNetwork(20, 12, 4);
         }
         
         this.apple = null;
@@ -100,7 +100,7 @@ class Snake {
             appleNorth = 1;
         index = xCorSave.findIndex(element => { return element == snakeHeadX });
         if (this.yCor[index] < snakeHeadY)
-            bodyNorth = 1 / (snakeHeadY - this.yCor[index]);
+            bodyNorth = 1 / (snakeHeadY - this.yCor[index]);		
 
         //East
         let borderEast = 0;
@@ -112,7 +112,7 @@ class Snake {
             appleEast = 1;
         index = yCorSave.findIndex(element => { return element == snakeHeadY });
         if (this.xCor[index] > snakeHeadX)
-            bodyEast = 1 / (this.xCor[index] - snakeHeadX);  
+            bodyEast = 1 / (this.xCor[index] - snakeHeadX);  		
             
         //South
         let borderSouth = 0;
@@ -137,6 +137,54 @@ class Snake {
         index = yCorSave.findIndex(element => { return element == snakeHeadY });
         if (this.xCor[index] < snakeHeadX)
             bodyWest = 1 / (snakeHeadX - this.xCor[index]);  
+		
+		
+		let appleNE = 0;
+		let bodyNE = 0;			
+		let appleSE = 0;
+		let bodySE = 0;
+		let appleSW = 0;
+		let bodySW = 0;
+		let appleNW = 0;
+		let bodyNW = 0;		
+		
+		for (let i = 0; i < this.numSegments; i++) {
+			//North-East
+			if (this.xCor[i] > this.snakeHeadX && this.yCor[i] < this.snakeHeadY){
+				bodyNE = 1 / Math.sqrt( ( Math.pow(this.xCor[i] - this.snakeHeadX, 2) + Math.pow(this.yCor[i] - snakeHeadY, 2) ) );
+			}
+			
+			if (this.apple.x > this.snakeHeadX && this.apple.y < this.snakeHeadY){
+				appleNE = 1 / Math.sqrt( ( Math.pow(this.apple.x - this.snakeHeadX, 2) + Math.pow(this.apple.y - snakeHeadY, 2) ) );
+			}	
+			
+			//South-East
+			if (this.xCor[i] > this.snakeHeadX && this.yCor[i] > this.snakeHeadY){
+				bodySE = 1 / Math.sqrt( ( Math.pow(this.xCor[i] - this.snakeHeadX, 2) + Math.pow(this.yCor[i] - snakeHeadY, 2) ) );
+			}
+			
+			if (this.apple.x > this.snakeHeadX && this.apple.y > this.snakeHeadY){
+				appleSE = 1 / Math.sqrt( ( Math.pow(this.apple.x - this.snakeHeadX, 2) + Math.pow(this.apple.y - snakeHeadY, 2) ) );
+			}	
+
+			//South-West
+			if (this.xCor[i] < this.snakeHeadX && this.yCor[i] > this.snakeHeadY){
+				bodySW = 1 / Math.sqrt( ( Math.pow(this.xCor[i] - this.snakeHeadX, 2) + Math.pow(this.yCor[i] - snakeHeadY, 2) ) );
+			}
+			
+			if (this.apple.x < this.snakeHeadX && this.apple.y > this.snakeHeadY){
+				appleSW = 1 / Math.sqrt( ( Math.pow(this.apple.x - this.snakeHeadX, 2) + Math.pow(this.apple.y - snakeHeadY, 2) ) );
+			}	
+
+			//North-West
+			if (this.xCor[i] < this.snakeHeadX && this.yCor[i] < this.snakeHeadY){
+				bodyNW = 1 / Math.sqrt( ( Math.pow(this.xCor[i] - this.snakeHeadX, 2) + Math.pow(this.yCor[i] - snakeHeadY, 2) ) );
+			}
+			
+			if (this.apple.x < this.snakeHeadX && this.apple.y < this.snakeHeadY){
+				appleNW = 1 / Math.sqrt( ( Math.pow(this.apple.x - this.snakeHeadX, 2) + Math.pow(this.apple.y - snakeHeadY, 2) ) );
+			}				
+		}		
             
         if (borderNorth == Infinity)
             borderNorth = 1;        
@@ -164,9 +212,13 @@ class Snake {
 
         let prediction = [];
         prediction = this.brain.feedForward([borderNorth, appleNorth, bodyNorth,
+										     appleNE, bodyNE,
                                              borderEast, appleEast, bodyEast,
+											 appleSE, bodySE,
                                              borderSouth, appleSouth, bodySouth,
-                                             borderWest, appleWest, bodyWest]);
+											 appleSW, bodySE,
+                                             borderWest, appleWest, bodyWest,
+											 appleNW, bodyNW]);
         
         index = Math.max(...prediction);
         index = prediction.findIndex(element => { return element == index });
@@ -228,7 +280,7 @@ class Snake {
         this.xCor.unshift(this.xCor[0]);
         this.yCor.unshift(this.yCor[0]);
         this.numSegments++;  
-        this.apples += 10;    
+        this.apples += 1;    
         this.timeWOEat = 0;
 
         this.color[1] -= 10;
