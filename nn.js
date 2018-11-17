@@ -46,19 +46,23 @@ class NeuralNetwork {
     }
 
     combine(nn){
-        let hidden = this.hiddenNodes / 2;
-        let output = this.outputNodes / 2;
+        let rate = 0.1;
 
-        let extern = 0;
-        for (let i = 0; i < hidden; i++) {
-            extern = Math.random() * this.hiddenNodes;
-            this.weights_ih.data[extern] = nn.weights_ih.data[extern];
+        for (let i = 0; i < this.hiddenNodes; i++) {
+            for (let j = 0; j <  this.inputNodes; j++){
+                if (Math.random() < rate){
+                    this.weights_ih.data[i][j] = nn.weights_ih.data[i][j];
+                }
+            }
         }
 
-        for (let i = 0; i < output; i++) {
-            extern = Math.random() * this.outputNodes;
-            this.weights_ho.data[extern] = nn.weights_ho.data[extern];
-        }        
+        for (let i = 0; i < this.outputNodes; i++) {
+            for (let j = 0; j <  this.hiddenNodes; j++){
+                if (Math.random() < rate){
+                    this.weights_ho.data[i][j] = nn.weights_ho.data[i][j];
+                }
+            }
+        }             
     }
 
     feedForward(input_array) {
@@ -82,12 +86,14 @@ class NeuralNetwork {
     mutate(rate) {
         function mutate(val) {
           if (Math.random() < rate) {
-            // return 2 * Math.random() - 1;
-            return val + randomGaussian(0, 0.1);
-          } else {
-            return val;
-          }
+            val += randomGaussian(0, 0.1);
+            if (val > 1) val = 1;
+            if (val < -1) val = -1;
+          } 
+
+          return val;
         }
+
         this.weights_ih.map(mutate);
         this.weights_ho.map(mutate);
         this.bias_h.map(mutate);

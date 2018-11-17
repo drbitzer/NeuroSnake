@@ -48,7 +48,7 @@ class Snake {
         if (snake) {
             this.brain = snake.brain.copy();
         } else {
-            this.brain = new NeuralNetwork(20, 12, 4);
+            this.brain = new NeuralNetwork(24, 14, 4);
         }
         
         this.apple = null;
@@ -68,10 +68,10 @@ class Snake {
     }
 
     look(dirX, dirY) {
-        let vision = [];
+        let vision = [0, 0, 0];
 
         let snakeHeadX = this.xCor[this.numSegments - 1];
-        let snakeHeadY = this.xCor[this.numSegments - 1];
+        let snakeHeadY = this.yCor[this.numSegments - 1];
 
         let curPosX = snakeHeadX;
         let curPosY = snakeHeadY;
@@ -88,7 +88,7 @@ class Snake {
             distance++;
 
             //Border
-            if ( (curPosX == 0 || curPosX == this.canvasWidth || curPosY == 0 || curPosY == this.canvasHeight) && !borderFound) {
+            if ( (curPosX <= 0 || curPosX >= this.canvasWidth || curPosY <= 0 || curPosY >= this.canvasHeight) && !borderFound) {
                 vision[0] = 1 / distance;
                 borderFound = true;
             }
@@ -101,7 +101,7 @@ class Snake {
 
             //Body
             if (!bodyFound)
-                for (let i = 0; i < this.numSegments; i++)
+                for (let i = 0; i < this.numSegments - 1; i++)
                     if (curPosX == this.xCor[i] && curPosY == this.yCor[i]) {
                         vision[2] = 1 / distance;
                         bodyFound = true;
@@ -125,149 +125,45 @@ class Snake {
         let snakeHeadX = this.xCor[this.xCor.length - 1];
         let snakeHeadY = this.yCor[this.yCor.length - 1];                                     
 
-        let xCorSave = this.xCor.slice();
-        let yCorSave = this.yCor.slice();
-        xCorSave.pop();
-        yCorSave.pop();
-        
-        let index = 0;
+        let input = [];
+        let vision = [];
 
         //North
-        let borderNorth = 0;
-        let appleNorth = 0;
-        let bodyNorth = 0;
+        vision = this.look(0, -10);
+        input.push(...vision);
 
-        borderNorth = 1 / snakeHeadY;
-        if (this.apple.x == snakeHeadX && this.apple.y < snakeHeadY)
-            appleNorth = 1;
-        index = xCorSave.findIndex(element => { return element == snakeHeadX });
-        if (this.yCor[index] < snakeHeadY)
-            bodyNorth = 1 / (snakeHeadY - this.yCor[index]);		            
+        //NorthEast
+        vision = this.look(10, -10);
+        input.push(...vision);
 
         //East
-        let borderEast = 0;
-        let appleEast = 0;
-        let bodyEast = 0;        
-
-        borderEast = 1 / (this.canvasWidth - snakeHeadX);
-        if (this.apple.y == snakeHeadY && this.apple.x > snakeHeadX)
-            appleEast = 1;
-        index = yCorSave.findIndex(element => { return element == snakeHeadY });
-        if (this.xCor[index] > snakeHeadX)
-            bodyEast = 1 / (this.xCor[index] - snakeHeadX);  		
+        vision = this.look(10, 0);
+        input.push(...vision);
+        
+        //SouthEast
+        vision = this.look(10, 10);
+        input.push(...vision);  
             
         //South
-        let borderSouth = 0;
-        let appleSouth = 0;
-        let bodySouth = 0;        
+        vision = this.look(0, 10);
+        input.push(...vision);
+        
+        //SouthWest
+        vision = this.look(-10, 10);
+        input.push(...vision);
 
-        borderSouth = 1 / (this.canvasHeight - snakeHeadY);
-        if (this.apple.x == snakeHeadX && this.apple.y > snakeHeadY)
-            appleSouth = 1;
-        index = xCorSave.findIndex(element => { return element == snakeHeadX });
-        if (this.yCor[index] > snakeHeadY)
-            bodySouth = 1 / (this.yCor[index] - snakeHeadY);  
-            
         //West
-        let borderWest = 0;
-        let appleWest = 0;
-        let bodyWest = 0;        
-
-        borderWest = 1 / snakeHeadX;
-        if (this.apple.y == snakeHeadY && this.apple.x < snakeHeadX)
-            appleWest = 1;
-        index = yCorSave.findIndex(element => { return element == snakeHeadY });
-        if (this.xCor[index] < snakeHeadX)
-            bodyWest = 1 / (snakeHeadX - this.xCor[index]);  
-		
-		
-		let appleNE = 0;
-		let bodyNE = 0;			
-		let appleSE = 0;
-		let bodySE = 0;
-		let appleSW = 0;
-		let bodySW = 0;
-		let appleNW = 0;
-		let bodyNW = 0;		
-		
-		for (let i = 0; i < this.numSegments - 1; i++) {
-            //North
-			if (this.xCor[i] > snakeHeadX && this.yCor[i] < snakeHeadY){
-				bodyNE = 1 / Math.sqrt( ( Math.pow(this.xCor[i] - snakeHeadX, 2) + Math.pow(this.yCor[i] - snakeHeadY, 2) ) );
-			}            
-
-			//North-East
-			if (this.xCor[i] > snakeHeadX && this.yCor[i] < snakeHeadY){
-				bodyNE = 1 / Math.sqrt( ( Math.pow(this.xCor[i] - snakeHeadX, 2) + Math.pow(this.yCor[i] - snakeHeadY, 2) ) );
-			}
-			
-			if (this.apple.x > snakeHeadX && this.apple.y < snakeHeadY){
-				appleNE = 1 / Math.sqrt( ( Math.pow(this.apple.x - snakeHeadX, 2) + Math.pow(this.apple.y - snakeHeadY, 2) ) );
-			}	
-			
-			//South-East
-			if (this.xCor[i] > snakeHeadX && this.yCor[i] > snakeHeadY){
-				bodySE = 1 / Math.sqrt( ( Math.pow(this.xCor[i] - snakeHeadX, 2) + Math.pow(this.yCor[i] - snakeHeadY, 2) ) );
-			}
-			
-			if (this.apple.x > snakeHeadX && this.apple.y > snakeHeadY){
-				appleSE = 1 / Math.sqrt( ( Math.pow(this.apple.x - snakeHeadX, 2) + Math.pow(this.apple.y - snakeHeadY, 2) ) );
-			}	
-
-			//South-West
-			if (this.xCor[i] < snakeHeadX && this.yCor[i] > snakeHeadY){
-				bodySW = 1 / Math.sqrt( ( Math.pow(this.xCor[i] - snakeHeadX, 2) + Math.pow(this.yCor[i] - snakeHeadY, 2) ) );
-			}
-			
-			if (this.apple.x < snakeHeadX && this.apple.y > snakeHeadY){
-				appleSW = 1 / Math.sqrt( ( Math.pow(this.apple.x - snakeHeadX, 2) + Math.pow(this.apple.y - snakeHeadY, 2) ) );
-			}	
-
-			//North-West
-			if (this.xCor[i] < snakeHeadX && this.yCor[i] < snakeHeadY){
-				bodyNW = 1 / Math.sqrt( ( Math.pow(this.xCor[i] - snakeHeadX, 2) + Math.pow(this.yCor[i] - snakeHeadY, 2) ) );
-			}
-			
-			if (this.apple.x < snakeHeadX && this.apple.y < snakeHeadY){
-				appleNW = 1 / Math.sqrt( ( Math.pow(this.apple.x - snakeHeadX, 2) + Math.pow(this.apple.y - snakeHeadY, 2) ) );
-			}				
-		}		
-            
-        if (borderNorth == Infinity)
-            borderNorth = 1;        
-
-        if (bodyNorth == Infinity)
-            bodyNorth = 1;
-
-        if (borderEast == Infinity)
-            borderEast = 1;
-
-        if (bodyEast == Infinity)
-            bodyEast = 1;            
-
-        if (borderSouth == Infinity)
-            borderSouth = 1;
-
-        if (bodySouth == Infinity)
-            bodySouth = 1;   
-            
-        if (borderWest == Infinity)
-            borderWest = 1;
-
-        if (bodyWest == Infinity)
-            bodyWest = 1;           
+        vision = this.look(-10, 0);
+        input.push(...vision);
+        
+        //NorthWest
+        vision = this.look(-10, -10);
+        input.push(...vision);      
 
         let prediction = [];
-        prediction = this.brain.feedForward([borderNorth, appleNorth, bodyNorth,
-										     appleNE, bodyNE,
-                                             borderEast, appleEast, bodyEast,
-											 appleSE, bodySE,
-                                             borderSouth, appleSouth, bodySouth,
-											 appleSW, bodySE,
-                                             borderWest, appleWest, bodyWest,
-											 appleNW, bodyNW]);
-        
-        index = Math.max(...prediction);
+        prediction = this.brain.feedForward(input);
+                
+        let index = Math.max(...prediction);
         index = prediction.findIndex(element => { return element == index });
 
         switch(index) {
