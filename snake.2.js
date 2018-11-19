@@ -95,7 +95,7 @@ class Snake {
 
             //Apple
             if (curPosX == this.apple.x && curPosY == this.apple.y && !appleFound) {
-                vision[1] = 1;
+                vision[1] = 1 / distance;
                 appleFound = true;
             }
 
