@@ -81,10 +81,10 @@ class Snake {
         let snakeHeadX = this.xCor[this.xCor.length - 1];
         let snakeHeadY = this.yCor[this.yCor.length - 1];                                     
 
-        let xCorSave = this.xCor.slice();
-        let yCorSave = this.yCor.slice();
-        xCorSave.pop();
-        yCorSave.pop();
+        //let xCorSave = this.xCor.slice();
+        //let yCorSave = this.yCor.slice();
+        //xCorSave.pop();
+        //yCorSave.pop();
         
         let index = 0;
 
@@ -95,10 +95,7 @@ class Snake {
 
         borderNorth = 1 / snakeHeadY;
         if (this.apple.x == snakeHeadX && this.apple.y < snakeHeadY)
-            appleNorth = 1;
-        index = xCorSave.findIndex(element => { return element == snakeHeadX });
-        if (this.yCor[index] < snakeHeadY)
-            bodyNorth = 1 / (snakeHeadY - this.yCor[index]);		            
+            appleNorth = 1;        
 
         //East
         let borderEast = 0;
@@ -108,10 +105,7 @@ class Snake {
         borderEast = 1 / (this.canvasWidth - snakeHeadX);
         if (this.apple.y == snakeHeadY && this.apple.x > snakeHeadX)
             appleEast = 1;
-        index = yCorSave.findIndex(element => { return element == snakeHeadY });
-        if (this.xCor[index] > snakeHeadX)
-            bodyEast = 1 / (this.xCor[index] - snakeHeadX);  		
-            
+            		           
         //South
         let borderSouth = 0;
         let appleSouth = 0;
@@ -120,9 +114,6 @@ class Snake {
         borderSouth = 1 / (this.canvasHeight - snakeHeadY);
         if (this.apple.x == snakeHeadX && this.apple.y > snakeHeadY)
             appleSouth = 1;
-        index = xCorSave.findIndex(element => { return element == snakeHeadX });
-        if (this.yCor[index] > snakeHeadY)
-            bodySouth = 1 / (this.yCor[index] - snakeHeadY);  
             
         //West
         let borderWest = 0;
@@ -131,10 +122,21 @@ class Snake {
 
         borderWest = 1 / snakeHeadX;
         if (this.apple.y == snakeHeadY && this.apple.x < snakeHeadX)
-            appleWest = 1;
-        index = yCorSave.findIndex(element => { return element == snakeHeadY });
-        if (this.xCor[index] < snakeHeadX)
-            bodyWest = 1 / (snakeHeadX - this.xCor[index]);  		
+            appleWest = 1;	
+
+		for (let i = 0; i < this.numSegments - 1; i++) {
+			if (this.xCor[i] == snakeHeadX && this.yCor[i] < snakeHeadY && !bodyNorth)
+				bodyNorth = 1 / (snakeHeadY - this.yCor[i]);
+			
+			if (this.xCor[i] > snakeHeadX && this.yCor[i] == snakeHeadY && !bodyEast)
+				 bodyEast = 1 / (this.xCor[i] - snakeHeadX); 
+			
+			if (this.xCor[i] == snakeHeadX && this.yCor[i] > snakeHeadY && !bodySouth) 
+				bodySouth = 1 / (this.yCor[i] - snakeHeadY);  			
+
+			if (this.xCor[i] < snakeHeadX && this.yCor[i] == snakeHeadY && !bodyWest)
+				bodyWest = 1 / (snakeHeadX - this.xCor[i]);  			
+		};
 		
 /* 		let appleNE = 0;
 		let bodyNE = 0;			
