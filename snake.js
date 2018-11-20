@@ -50,7 +50,7 @@ class Snake {
         if (snake) {
             this.brain = snake.brain.copy();
         } else {
-            this.brain = new NeuralNetwork(11, 7, 3);
+            this.brain = new NeuralNetwork(4, 3, 3);
         }
         
         this.apple = null;
@@ -83,207 +83,205 @@ class Snake {
         let snakeHeadX = this.xCor[this.xCor.length - 1];
         let snakeHeadY = this.yCor[this.yCor.length - 1];     
 
-        let leftBorderDist = 0;
-        let rightBorderDist = 0;
-        let aheadBorderDist = 0;
-        let appleAhead = 0;
-        let appleLeft = 0;
-        let appleRight = 0;
-        let bodyAhead = 0;
-        let bodyLeft = 0;
-        let bodyRight = 0;
         let appleDist = Math.sqrt( ( Math.pow(this.apple.x - snakeHeadX, 2) + 
-                                     Math.pow(this.apple.y - snakeHeadY, 2) ) );                                     
+                                     Math.pow(this.apple.y - snakeHeadY, 2) ) );                                                                          
 
-        let xCorSave = this.xCor.slice();
-        let yCorSave = this.yCor.slice();
-        this.xCor.pop();
-        this.yCor.pop();
+        let left = 0;
+        let right = 0;
+        let ahead = 0;
 
         let index = 0;
         switch(this.direction) {
             case this.DIRECTIONS.up:
-                leftBorderDist = snakeHeadX / this.unit; // this.canvasWidth;
-                rightBorderDist = ( this.canvasWidth - snakeHeadX ) / this.unit; // this.canvasWidth;
-                aheadBorderDist = snakeHeadY / this.unit; // this.canvasHeight;
-                appleAhead = ( snakeHeadY - this.apple.y ) / this.unit; // appleDist;
-                appleLeft = ( snakeHeadX - this.apple.x ) / this.unit; // appleDist;
-                appleRight = ( this.apple.x - snakeHeadX ) / this.unit; // appleDist;
-
-                index = this.xCor.findIndex( element => { return element == snakeHeadX; });
-                if ( this.yCor[index] < snakeHeadY) {
-                    //bodyAhead = this.PART_SIZE / ( snakeHeadY - this.yCor[index] );
-                    bodyAhead = ( snakeHeadY - this.yCor[index] ) / this.unit;
+                //Left
+                if (this.apple.x == snakeHeadX - 10 && this.apple.y == snakeHeadY)
+                    left = 1;
+                
+                for (let i = this.numSegments - 2; i >=0; i--){
+                    if (this.xCor[i] == snakeHeadX - 10 && this.yCor[i] == snakeHeadY) {
+                        left = -1;
+                        break;
+                    }
                 }
-    
-                index = this.yCor.findIndex( element => { return element == snakeHeadY; });
-                if ( this.xCor[index] < snakeHeadX) {
-                    //bodyLeft = this.PART_SIZE / ( snakeHeadX - this.xCor[index] );
-                    bodyAhead = ( snakeHeadX - this.xCor[index] ) / this.unit;
-                }                
+                
+                if (snakeHeadX - 10 == 0)
+                    left = -1;
 
-                index = this.yCor.findIndex( element => { return element == snakeHeadY; });
-                if ( this.xCor[index] > snakeHeadX) {
-                    //bodyRight = this.PART_SIZE / ( this.xCor[index] - snakeHeadX );
-                    bodyRight = ( this.xCor[index] - snakeHeadX ) / this.unit;
-                }                
+                //Right
+                if (this.apple.x == snakeHeadX + 10 && this.apple.y == snakeHeadY)
+                    right= 1;
+                
+                for (let i = this.numSegments - 2; i >=0; i--){
+                    if (this.xCor[i] == snakeHeadX + 10 && this.yCor[i] == snakeHeadY) {
+                        right = -1;
+                        break;
+                    }
+                }
+
+                if (snakeHeadX + 10 == this.canvasWidth)
+                    right = -1;      
+                    
+                //Ahead
+                if (this.apple.x == snakeHeadX && this.apple.y == snakeHeadY - 10)
+                    ahead= 1;
+                
+                for (let i = this.numSegments - 2; i >=0; i--){
+                    if (this.xCor[i] == snakeHeadX && this.yCor[i] == snakeHeadY - 10) {
+                        ahead = -1;
+                        break;
+                    }
+                }
+
+                if (snakeHeadY - 10 == 0)
+                    ahead = -1;                        
 
                 break;
 
-            case this.DIRECTIONS.right:
-                leftBorderDist = snakeHeadY / this.unit; // this.canvasHeight;
-                rightBorderDist = ( this.canvasHeight - snakeHeadY ) / this.unit; // this.canvasHeight;
-                aheadBorderDist = ( this.canvasWidth - snakeHeadX ) / this.unit; // this.canvasWidth;
-                appleAhead = ( this.apple.x - snakeHeadX ) / this.unit; // appleDist;
-                appleLeft = ( snakeHeadY - this.apple.y ) / this.unit; // appleDist;
-                appleRight = ( this.apple.y - snakeHeadY ) / this.unit; // appleDist;           
-
-                index = this.yCor.findIndex( element => { return element == snakeHeadY; });
-                if ( this.xCor[index] > snakeHeadX) {
-                    //bodyAhead = this.PART_SIZE / ( this.xCor[index] - snakeHeadX );
-                    bodyAhead = ( this.xCor[index] - snakeHeadX ) / this.unit;
+            case this.DIRECTIONS.right:  
+                //Left
+                if (this.apple.x == snakeHeadX  && this.apple.y == snakeHeadY - 10)
+                    left = 1;
+                
+                for (let i = this.numSegments - 2; i >=0; i--){
+                    if (this.xCor[i] == snakeHeadX && this.yCor[i] == snakeHeadY - 10) {
+                        left = -1;
+                        break;
+                    }
                 }
-    
-                index = this.xCor.findIndex( element => { return element == snakeHeadX; });
-                if ( this.yCor[index] < snakeHeadY) {
-                    //bodyLeft = this.PART_SIZE / ( snakeHeadY - this.yCor[index] );
-                    bodyLeft = ( snakeHeadY - this.yCor[index] ) / this.unit;
-                }                
+                
+                if (snakeHeadY - 10 == 0)
+                    left = -1;
 
-                index = this.xCor.findIndex( element => { return element == snakeHeadX; });
-                if ( this.yCor[index] > snakeHeadY) {
-                    //bodyRight = this.PART_SIZE / ( this.yCor[index] - snakeHeadY );
-                    bodyRight = ( this.yCor[index] - snakeHeadY ) / this.unit;
-                }                   
+                //Right
+                if (this.apple.x == snakeHeadX && this.apple.y == snakeHeadY + 10)
+                    right= 1;
+                
+                for (let i = this.numSegments - 2; i >=0; i--){
+                    if (this.xCor[i] == snakeHeadX && this.yCor[i] == snakeHeadY + 10) {
+                        right = -1;
+                        break;
+                    }
+                }
+
+                if (snakeHeadY + 10 == this.canvasHeight)
+                    right = -1;      
+                    
+                //Ahead
+                if (this.apple.x == snakeHeadX + 10 && this.apple.y == snakeHeadY)
+                    ahead= 1;
+                
+                for (let i = this.numSegments - 2; i >=0; i--){
+                    if (this.xCor[i] == snakeHeadX + 10 && this.yCor[i] == snakeHeadY) {
+                        ahead = -1;
+                        break;
+                    }
+                }
+
+                if (snakeHeadX + 10 == this.canvasWidth)
+                    ahead = -1;                         
 
                 break;                 
 
             case this.DIRECTIONS.down:
-                leftBorderDist = ( this.canvasWidth - snakeHeadX ) / this.unit; // this.canvasWidth;
-                rightBorderDist = snakeHeadX / this.unit; // this.canvasHeight;
-                aheadBorderDist = ( this.canvasHeight - snakeHeadY ) / this.unit; // this.canvasHeight;
-                appleAhead = ( this.apple.y - snakeHeadY ) / this.unit; // appleDist;
-                appleLeft = ( this.apple.x - snakeHeadX ) / this.unit; // appleDist;
-                appleRight = ( snakeHeadX - this.apple.x ) / this.unit; // appleDist;
+                //Left
+                if (this.apple.x == snakeHeadX + 10 && this.apple.y == snakeHeadY)
+                    left = 1;
                 
-                index = this.xCor.findIndex( element => { return element == snakeHeadX; });
-                if ( this.yCor[index] > snakeHeadY) {
-                    //bodyAhead = this.PART_SIZE / ( this.yCor[index] - snakeHeadY );
-                    bodyAhead = ( this.yCor[index] - snakeHeadY ) / this.unit;
+                for (let i = this.numSegments - 2; i >=0; i--){
+                    if (this.xCor[i] == snakeHeadX + 10 && this.yCor[i] == snakeHeadY) {
+                        left = -1;
+                        break;
+                    }
                 }
-    
-                index = this.yCor.findIndex( element => { return element == snakeHeadY; });
-                if ( this.xCor[index] > snakeHeadX) {
-                    //bodyLeft = this.PART_SIZE / (this.xCor[index] - snakeHeadX);
-                    bodyLeft = (this.xCor[index] - snakeHeadX) / this.unit;
-                }                
-
-                index = this.yCor.findIndex( element => { return element == snakeHeadY; });
-                if ( this.xCor[index] < snakeHeadX) {
-                    //bodyRight = this.PART_SIZE / ( snakeHeadX - this.xCor[index] );
-                    bodyRight = ( snakeHeadX - this.xCor[index] ) / this.unit;
-                }                    
                 
+                if (snakeHeadX + 10 == this.canvasWidth)
+                    left = -1;
+
+                //Right
+                if (this.apple.x == snakeHeadX - 10 && this.apple.y == snakeHeadY)
+                    right= 1;
+                
+                for (let i = this.numSegments - 2; i >=0; i--){
+                    if (this.xCor[i] == snakeHeadX - 10 && this.yCor[i] == snakeHeadY) {
+                        right = -1;
+                        break;
+                    }
+                }
+
+                if (snakeHeadX - 10 == 0)
+                    right = -1;      
+                    
+                //Ahead
+                if (this.apple.x == snakeHeadX && this.apple.y == snakeHeadY + 10)
+                    ahead= 1;
+                
+                for (let i = this.numSegments - 2; i >=0; i--){
+                    if (this.xCor[i] == snakeHeadX && this.yCor[i] == snakeHeadY + 10) {
+                        ahead = -1;
+                        break;
+                    }
+                }
+
+                if (snakeHeadY + 10 == this.canvasHeight)
+                    ahead = -1;  
+
                 break; 
 
-            case this.DIRECTIONS.left:
-                leftBorderDist = ( this.canvasHeight - snakeHeadY ) / this.unit; // this.canvasHeight;
-                rightBorderDist = snakeHeadY  / this.unit; // this.canvasHeight;
-                aheadBorderDist = snakeHeadX / this.unit; // this.canvasWidth;
-                appleAhead = ( snakeHeadX - this.apple.x ) / this.unit; // appleDist;
-                appleLeft = ( this.apple.y - snakeHeadY ) / this.unit; // appleDist;
-                appleRight = ( snakeHeadY - this.apple.y ) / this.unit; // appleDist;    
+            case this.DIRECTIONS.left:              
+                //Left
+                if (this.apple.x == snakeHeadX  && this.apple.y == snakeHeadY + 10)
+                    left = 1;
                 
-                index = this.yCor.findIndex( element => { return element == snakeHeadY; });
-                if ( this.xCor[index] < snakeHeadX) {
-                    //bodyAhead = this.PART_SIZE / (snakeHeadX - this.xCor[index]);
-                    bodyAhead = (snakeHeadX - this.xCor[index]) / this.unit;
+                for (let i = this.numSegments - 2; i >=0; i--){
+                    if (this.xCor[i] == snakeHeadX && this.yCor[i] == snakeHeadY + 10) {
+                        left = -1;
+                        break;
+                    }
                 }
-    
-                index = this.xCor.findIndex( element => { return element == snakeHeadX; });
-                if ( this.yCor[index] > snakeHeadY) {
-                    //bodyLeft = this.PART_SIZE / (this.yCor[index] - snakeHeadY);
-                    bodyLeft = (this.yCor[index] - snakeHeadY) / this.unit;
-                }                
-
-                index = this.xCor.findIndex( element => { return element == snakeHeadX; });
-                if ( this.yCor[index] < snakeHeadY) {
-                    //bodyRight = this.PART_SIZE / (snakeHeadY - this.yCor[index]);
-                    bodyRight = (snakeHeadY - this.yCor[index]) / this.unit;
-                }                   
                 
+                if (snakeHeadY + 10 == this.canvasHeight)
+                    left = -1;
+
+                //Right
+                if (this.apple.x == snakeHeadX && this.apple.y == snakeHeadY - 10)
+                    right= 1;
+                
+                for (let i = this.numSegments - 2; i >=0; i--){
+                    if (this.xCor[i] == snakeHeadX && this.yCor[i] == snakeHeadY - 10) {                        
+                        right = -1;
+                        break;
+                    }
+                }
+
+                if (snakeHeadY - 10 == 0)
+                    right = -1;      
+                    
+                //Ahead
+                if (this.apple.x == snakeHeadX - 10 && this.apple.y == snakeHeadY)
+                    ahead= 1;
+                
+                for (let i = this.numSegments - 2; i >=0; i--){
+                    if (this.xCor[i] == snakeHeadX - 10 && this.yCor[i] == snakeHeadY) {
+                        ahead = -1;
+                        break;
+                    }
+                }
+
+                if (snakeHeadX - 10 == 0)
+                    ahead = -1;                                         
+
                 break;             
-        }       
-        
-        this.xCor = xCorSave.slice();
-        this.yCor = yCorSave.slice();
+        }        
 
-        if (appleAhead < 0) appleAhead = 0;
-        if (appleLeft < 0) appleLeft= 0;
-        if (appleRight < 0) appleRight = 0;                  
-        
-        this.lastAppleDist = appleDist;   
-
-        let directionInput = 1 / this.direction;
-
-        if (aheadBorderDist)
-            aheadBorderDist = 1 / aheadBorderDist;
-
-        if (leftBorderDist)
-            leftBorderDist = 1 / leftBorderDist;
-
-        if (rightBorderDist)
-            rightBorderDist = 1 / rightBorderDist;
-
-        if (appleAhead)
-            appleAhead = 1 / appleAhead;
-
-        if (appleLeft)
-            appleLeft = 1 / appleLeft;
-
-        if (appleRight)
-            appleRight = 1 / appleRight;
-
-        if (bodyAhead)
-            bodyAhead = 1 / bodyAhead;
-
-        if (bodyLeft)
-            bodyLeft = 1 / bodyLeft;
-
-        if (bodyRight)
-            bodyRight = 1 / bodyRight;
-
-        let currentLength = 1 / this.numSegments;
-
-        
+        appleDist = 1 / appleDist;
 
         let prediction = [];
-        prediction = this.brain.feedForward([directionInput, aheadBorderDist, leftBorderDist, rightBorderDist, appleAhead, appleLeft, appleRight, bodyAhead, bodyLeft, bodyRight, currentLength]);
-        
-        let probability = 0;
-        index = 0;
-        let action;
-        prediction.forEach(element => {
-            index++;
-            if (element > probability) {
-                probability = element;
-
-                switch (index) {
-                    case 1:
-                        action = this.ACTION.ahead;
-                        break;
-                    case 2:
-                        action = this.ACTION.left;
-                        break;
-                    case 3:
-                        action = this.ACTION.right;
-                        break;
-                }
+        prediction = this.brain.feedForward([ahead, left, right, appleDist]);
                 
-            }            
-        });
+        index = Math.max(...prediction);
+        index = prediction.findIndex(element => { return element == index }) + 1;
 
-        switch(action) {
+        switch(index) {
             case this.ACTION.ahead:
                 this.turn(this.direction);
                 break;
@@ -379,8 +377,6 @@ class Snake {
 
         let snakeHeadX = this.xCor[this.xCor.length - 1];
         let snakeHeadY = this.yCor[this.yCor.length - 1];       
-        this.lastAppleDist = Math.sqrt( ( Math.pow(this.apple.x/this.canvasWidth - snakeHeadX/this.canvasWidth, 2) + 
-                             Math.pow(this.apple.y/this.canvasHeight - snakeHeadY/this.canvasHeight, 2) ) );
     }
 
 }
