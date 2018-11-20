@@ -179,8 +179,16 @@ function draw() {
       snakeSave = []; 
       fitnessElem.html('Fitness = ' + bestSnake1.fitness + ', ' + bestSnake2.fitness);
 
+      snakeArr.push(new Snake(500, 500, 10, bestSnake1));
+      snakeArr[0].setApple(new Apple(500, 500, 10));
+      snakeArr[0].apple.spawn();      
+
+      snakeArr.push(new Snake(500, 500, 10, bestSnake2));
+      snakeArr[1].setApple(new Apple(500, 500, 10));
+      snakeArr[1].apple.spawn();            
+
       //Generate children
-      for (let i = 0; i < MAX; i++){        
+      for (let i = 2; i < MAX; i++){        
         snakeArr.push(new Snake(500, 500, 10, bestSnake1));
         snakeArr[i].brain.combine(bestSnake2.brain);
         snakeArr[i].brain.mutate(0.3);
@@ -207,7 +215,7 @@ function checkGameStatus(snake, index) {
         snake.yCor[snake.yCor.length - 1] > height ||
         snake.yCor[snake.yCor.length - 1] < 0 || checkSnakeCollision(snake)) { 
 
-      snake.score -= (snake.score * 80 / 100);
+      //snake.score -= (snake.score * 80 / 100);
       snakeSave.push(snake);
       snakeArr.splice(index, 1);
     }

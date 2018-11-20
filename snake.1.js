@@ -48,7 +48,7 @@ class Snake {
         if (snake) {
             this.brain = snake.brain.copy();
         } else {
-            this.brain = new NeuralNetwork(12, 8, 4);
+            this.brain = new NeuralNetwork(13, 8, 4);
         }
         
         this.apple = null;
@@ -72,7 +72,7 @@ class Snake {
         this.timeWOEat++;
         if ( this.timeWOEat / 10 >= 40 ){
             this.isAlive = false;
-            this.score -= (this.score * 50 / 100);
+            //this.score -= (this.score * 50 / 100);
             return;
         }      
         
@@ -154,12 +154,15 @@ class Snake {
 
         if (bodyWest == Infinity)
             bodyWest = 1;      
+
+        let directionInput = this.direction / 4;
             
         let prediction = [];
         prediction = this.brain.feedForward([borderNorth, appleNorth, bodyNorth,
                                              borderEast, appleEast, bodyEast,
                                              borderSouth, appleSouth, bodySouth,
                                              borderWest, appleWest, bodyWest,
+                                             directionInput
                                             ]);
         
         let index = Math.max(...prediction);
