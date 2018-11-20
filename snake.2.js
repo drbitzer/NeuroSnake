@@ -48,7 +48,7 @@ class Snake {
         if (snake) {
             this.brain = snake.brain.copy();
         } else {
-            this.brain = new NeuralNetwork(24, 14, 4);
+            this.brain = new NeuralNetwork(32, 18, 4);
         }
         
         this.apple = null;
@@ -68,7 +68,7 @@ class Snake {
     }
 
     look(dirX, dirY) {
-        let vision = [0, 0, 0];
+        let vision = [0, 0, 0, 0];
 
         let snakeHeadX = this.xCor[this.numSegments - 1];
         let snakeHeadY = this.yCor[this.numSegments - 1];
@@ -94,10 +94,11 @@ class Snake {
             }
 
             //Apple
+            //Is the Apple straight ahead on this direction?
             if (curPosX == this.apple.x && curPosY == this.apple.y && !appleFound) {
-                vision[1] = 1 / distance;
+                vision[1] = 1;
                 appleFound = true;
-            }
+            }                        
 
             //Body
             if (!bodyFound)
@@ -105,7 +106,23 @@ class Snake {
                     if (curPosX == this.xCor[i] && curPosY == this.yCor[i]) {
                         vision[2] = 1 / distance;
                         bodyFound = true;
+                        break;
                     }
+        }
+
+        //Is the apple on that side?
+        if (Math.sign(dirX) >= 0 && Math.sign(dirY) <= 0) { //Nort North-East
+            if (this.apple.x >= snakeHeadX && this.apple.y <= snakeHeadY)
+                vision[3] = 1;
+        } else if (Math.sign(dirX) >= 0 && Math.sign(dirY) >= 0) {  //East South-East
+            if (this.apple.x >= snakeHeadX && this.apple.y >= snakeHeadY)
+                vision[3] = 1;
+        } else if (Math.sign(dirX) <= 0 && Math.sign(dirY) >= 0) {  //South-West West
+            if (this.apple.x <= snakeHeadX && this.apple.y >= snakeHeadY)
+                vision[3] = 1;
+        } else if (Math.sign(dirX) <= 0 && Math.sign(dirY) <= 0) {  //North-West North
+            if (this.apple.x <= snakeHeadX && this.apple.y <= snakeHeadY)
+                vision[3] = 1;
         }
 
         return vision;

@@ -48,7 +48,7 @@ class Snake {
         if (snake) {
             this.brain = snake.brain.copy();
         } else {
-            this.brain = new NeuralNetwork(20, 12, 4);
+            this.brain = new NeuralNetwork(12, 8, 4);
         }
         
         this.apple = null;
@@ -65,50 +65,6 @@ class Snake {
             this.yCor.push(this.YSTART);
         }           
 
-    }
-
-    look(dirX, dirY) {
-        let vision = [];
-
-        let snakeHeadX = this.xCor[this.numSegments - 1];
-        let snakeHeadY = this.xCor[this.numSegments - 1];
-
-        let curPosX = snakeHeadX;
-        let curPosY = snakeHeadY;
-
-        let distance = 0;
-
-        let borderFound = false;
-        let appleFound = false;
-        let bodyFound = false;
-
-        while (!borderFound) {
-            curPosX += dirX;
-            curPosY += dirY;
-            distance++;
-
-            //Border
-            if ( (curPosX == 0 || curPosX == this.canvasWidth || curPosY == 0 || curPosY == this.canvasHeight) && !borderFound) {
-                vision[0] = 1 / distance;
-                borderFound = true;
-            }
-
-            //Apple
-            if (curPosX == this.apple.x && curPosY == this.apple.y && !appleFound) {
-                vision[1] = 1;
-                appleFound = true;
-            }
-
-            //Body
-            if (!bodyFound)
-                for (let i = 0; i < this.numSegments; i++)
-                    if (curPosX == this.xCor[i] && curPosY == this.yCor[i]) {
-                        vision[2] = 1 / distance;
-                        bodyFound = true;
-                    }
-        }
-
-        return vision;
     }
 
     update(draw) {
@@ -178,10 +134,9 @@ class Snake {
             appleWest = 1;
         index = yCorSave.findIndex(element => { return element == snakeHeadY });
         if (this.xCor[index] < snakeHeadX)
-            bodyWest = 1 / (snakeHeadX - this.xCor[index]);  
+            bodyWest = 1 / (snakeHeadX - this.xCor[index]);  		
 		
-		
-		let appleNE = 0;
+/* 		let appleNE = 0;
 		let bodyNE = 0;			
 		let appleSE = 0;
 		let bodySE = 0;
@@ -231,7 +186,7 @@ class Snake {
 			if (this.apple.x < snakeHeadX && this.apple.y < snakeHeadY){
 				appleNW = 1 / Math.sqrt( ( Math.pow(this.apple.x - snakeHeadX, 2) + Math.pow(this.apple.y - snakeHeadY, 2) ) );
 			}				
-		}		
+		}	 */	
             
         if (borderNorth == Infinity)
             borderNorth = 1;        
@@ -259,13 +214,14 @@ class Snake {
 
         let prediction = [];
         prediction = this.brain.feedForward([borderNorth, appleNorth, bodyNorth,
-										     appleNE, bodyNE,
+										     //appleNE, bodyNE,
                                              borderEast, appleEast, bodyEast,
-											 appleSE, bodySE,
+											 //appleSE, bodySE,
                                              borderSouth, appleSouth, bodySouth,
-											 appleSW, bodySE,
+											 //appleSW, bodySE,
                                              borderWest, appleWest, bodyWest,
-											 appleNW, bodyNW]);
+                                             //appleNW, bodyNW
+                                            ]);
         
         index = Math.max(...prediction);
         index = prediction.findIndex(element => { return element == index });
