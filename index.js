@@ -130,8 +130,25 @@ function draw() {
 
       calcFitness();
 
-      let bestSnake1 = snakeSave[0];
-      let bestSnake2 = snakeSave[0];
+/*       let parent1 = snakeSave[0];
+      let parent2 = snakeSave[0];
+      let index = 0;
+      for (let i = 0; i < snakeSave.length; i++) {
+        if (snakeSave[i].apples > parent1.apples) {
+          parent1 = snakeSave[i];
+          index = i;
+        }
+      }      
+
+      snakeSave.splice(index, 1);
+      
+      for (let i = 0; i < snakeSave.length; i++) {
+        if (snakeSave[i].score > parent2.score) {
+          parent2 = snakeSave[i];
+        }
+      }  */   
+
+      let bestSnake1 = snakeSave[0];      
       let fitness = 0;
       let bestFitness = 0;
       let bestSnakeIndex = 0;
@@ -144,12 +161,12 @@ function draw() {
           bestSnakeIndex = i;
         }
       }
-
       snakeSave.splice(bestSnakeIndex, 1);
-      fitnessElem.html('Fitness = ' + bestFitness);
 
+      let bestSnake2 = snakeSave[0];
       fitness = 0;
       bestFitness = 0;
+      bestSnakeIndex = 0;
       for (let i = 0; i < snakeSave.length; i++) {
         fitness = snakeSave[i].fitness;
         if (fitness > bestFitness) {
@@ -157,9 +174,10 @@ function draw() {
           bestFitness = fitness;
           bestSnakeIndex = i;
         }
-      }     
+      }
 
-      snakeSave = [];
+      snakeSave = []; 
+      fitnessElem.html('Fitness = ' + bestSnake1.fitness + ', ' + bestSnake2.fitness);
 
       //Generate children
       for (let i = 0; i < MAX; i++){        
@@ -178,7 +196,7 @@ function calcFitness() {
     totalScore += (snakeSave[i].apples + snakeSave[i].score);
 
   snakeSave.forEach(element => {
-    element.fitness = ( element.apples + element.score );    
+    element.fitness = element.apples + element.score;    
   });
 }
 
@@ -189,6 +207,7 @@ function checkGameStatus(snake, index) {
         snake.yCor[snake.yCor.length - 1] > height ||
         snake.yCor[snake.yCor.length - 1] < 0 || checkSnakeCollision(snake)) { 
 
+      snake.score -= (snake.score * 80 / 100);
       snakeSave.push(snake);
       snakeArr.splice(index, 1);
     }
