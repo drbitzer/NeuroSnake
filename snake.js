@@ -50,7 +50,7 @@ class Snake {
         if (snake) {
             this.brain = snake.brain.copy();
         } else {
-            this.brain = new NeuralNetwork(4, 3, 3);
+            this.brain = new NeuralNetwork(7, 49, 3);
         }
         
         this.apple = null;
@@ -74,7 +74,7 @@ class Snake {
         this.timeWOEat++;
         if ( this.timeWOEat / 10 >= 40 ){
             this.isAlive = false;
-            //this.score -= (this.score * 80 / 100);
+            //this.score -= (this.score * 40 / 100);
             return;
         }      
         
@@ -89,194 +89,186 @@ class Snake {
         let left = 0;
         let right = 0;
         let ahead = 0;
+		let appleAngle = 0;			
+		let aheadWall = 0;
+		let rightWall = 0;
+		let leftWall = 0;
+		let appleVect = createVector(this.apple.x - snakeHeadX, this.apple.y - snakeHeadY);
+		let snakeDirVect = null;
 
         let index = 0;
         switch(this.direction) {
             case this.DIRECTIONS.up:
-                //Left
-                if (this.apple.x == snakeHeadX - 10 && this.apple.y == snakeHeadY)
-                    left = 1;
-                
+				//Calculate the angle between the snake direction vector and the apple vector
+				snakeDirVect = createVector(0, -snakeHeadY);				
+				appleAngle = degrees(snakeDirVect.angleBetween(appleVect)) / 180;
+				if (this.apple.x < snakeHeadX)
+					appleAngle = -appleAngle;
+				
+				//Left: Body?
                 for (let i = this.numSegments - 2; i >=0; i--){
-                    if (this.xCor[i] == snakeHeadX - 10 && this.yCor[i] == snakeHeadY) {
-                        left = -1;
+                    if (this.xCor[i] < snakeHeadX && this.yCor[i] == snakeHeadY) {
+                        left = (snakeHeadX - this.xCor[i]) / this.canvasWidth;
                         break;
                     }
                 }
                 
-                if (snakeHeadX - 10 == 0)
-                    left = -1;
+				//Left: Wall?				
+				leftWall = snakeHeadX / this.canvasWidth;
 
-                //Right
-                if (this.apple.x == snakeHeadX + 10 && this.apple.y == snakeHeadY)
-                    right= 1;
-                
+                //Right: Body?                
                 for (let i = this.numSegments - 2; i >=0; i--){
-                    if (this.xCor[i] == snakeHeadX + 10 && this.yCor[i] == snakeHeadY) {
-                        right = -1;
+                    if (this.xCor[i] > snakeHeadX  && this.yCor[i] == snakeHeadY) {
+                        right = (this.xCor[i] - snakeHeadX) / this.canvasWidth;
                         break;
                     }
                 }
-
-                if (snakeHeadX + 10 == this.canvasWidth)
-                    right = -1;      
+				
+				//Right: Wall?                
+                rightWall = (this.canvasWidth - snakeHeadX) / this.canvasWidth;      
                     
-                //Ahead
-                if (this.apple.x == snakeHeadX && this.apple.y == snakeHeadY - 10)
-                    ahead= 1;
-                
+                //Ahead: Body?                
                 for (let i = this.numSegments - 2; i >=0; i--){
-                    if (this.xCor[i] == snakeHeadX && this.yCor[i] == snakeHeadY - 10) {
-                        ahead = -1;
+                    if (this.xCor[i] == snakeHeadX && this.yCor[i] < snakeHeadY) {
+                        ahead = (snakeHeadY - this.yCor[i]) / this.canvasHeight;
                         break;
                     }
                 }
-
-                if (snakeHeadY - 10 == 0)
-                    ahead = -1;                        
+	
+				//Ahead: Wall?
+				aheadWall = snakeHeadY / this.canvasHeight;                        
 
                 break;
 
             case this.DIRECTIONS.right:  
-                //Left
-                if (this.apple.x == snakeHeadX  && this.apple.y == snakeHeadY - 10)
-                    left = 1;
-                
-                for (let i = this.numSegments - 2; i >=0; i--){
-                    if (this.xCor[i] == snakeHeadX && this.yCor[i] == snakeHeadY - 10) {
-                        left = -1;
+				//Calculate the angle between the snake direction vector and the apple vector
+				snakeDirVect = createVector(0, snakeHeadX);				
+				appleAngle = degrees(snakeDirVect.angleBetween(appleVect)) / 180;
+				if (this.apple.y < snakeHeadY)
+					appleAngle = -appleAngle;
+				
+				//Left: Body?
+                for (let i = this.numSegments - 2; i >= 0; i--){
+                    if (this.xCor[i] == snakeHeadX && this.yCor[i] < snakeHeadY) {
+                        left = (snakeHeadY - this.yCor[i]) / this.canvasHeight;
                         break;
                     }
                 }
                 
-                if (snakeHeadY - 10 == 0)
-                    left = -1;
+				//Left: Wall?				
+				leftWall = snakeHeadY / this.canvasHeight;
 
-                //Right
-                if (this.apple.x == snakeHeadX && this.apple.y == snakeHeadY + 10)
-                    right= 1;
-                
-                for (let i = this.numSegments - 2; i >=0; i--){
-                    if (this.xCor[i] == snakeHeadX && this.yCor[i] == snakeHeadY + 10) {
-                        right = -1;
+                //Right: Body?                
+                for (let i = this.numSegments - 2; i >= 0; i--){
+                    if (this.xCor[i] == snakeHeadX  && this.yCor[i] > snakeHeadY) {
+                        right = (this.yCor[i] - snakeHeadY) / this.canvasHeight;
                         break;
                     }
                 }
-
-                if (snakeHeadY + 10 == this.canvasHeight)
-                    right = -1;      
+				
+				//Right: Wall?               
+                rightWall = (this.canvasHeight - snakeHeadY) / this.canvasHeight;      
                     
-                //Ahead
-                if (this.apple.x == snakeHeadX + 10 && this.apple.y == snakeHeadY)
-                    ahead= 1;
-                
+                //Ahead: Body?                
                 for (let i = this.numSegments - 2; i >=0; i--){
-                    if (this.xCor[i] == snakeHeadX + 10 && this.yCor[i] == snakeHeadY) {
-                        ahead = -1;
+                    if (this.xCor[i] > snakeHeadX && this.yCor[i] == snakeHeadY) {
+                        ahead = (this.xCor[i] - snakeHeadX) / this.canvasWidth;
                         break;
                     }
                 }
+	
+				//Ahead: Wall?                
+				aheadWall = (this.canvasWidth - snakeHeadX) / this.canvasWidth;                        
 
-                if (snakeHeadX + 10 == this.canvasWidth)
-                    ahead = -1;                         
-
-                break;                 
+                break;               
 
             case this.DIRECTIONS.down:
-                //Left
-                if (this.apple.x == snakeHeadX + 10 && this.apple.y == snakeHeadY)
-                    left = 1;
-                
+				//Calculate the angle between the snake direction vector and the apple vector
+				snakeDirVect = createVector(0, snakeHeadY);				
+				appleAngle = degrees(snakeDirVect.angleBetween(appleVect)) / 180;
+				if (this.apple.x > snakeHeadX)
+					appleAngle = -appleAngle;
+				
+				//Left: Body?
                 for (let i = this.numSegments - 2; i >=0; i--){
-                    if (this.xCor[i] == snakeHeadX + 10 && this.yCor[i] == snakeHeadY) {
-                        left = -1;
+                    if (this.xCor[i] > snakeHeadX && this.yCor[i] == snakeHeadY) {
+                        left = (this.xCor[i] - snakeHeadX) / this.canvasWidth;
                         break;
                     }
                 }
                 
-                if (snakeHeadX + 10 == this.canvasWidth)
-                    left = -1;
+				//Left: Wall?				
+				leftWall = (this.canvasWidth - snakeHeadX) / this.canvasWidth;
 
-                //Right
-                if (this.apple.x == snakeHeadX - 10 && this.apple.y == snakeHeadY)
-                    right= 1;
-                
+                //Right: Body?                
                 for (let i = this.numSegments - 2; i >=0; i--){
-                    if (this.xCor[i] == snakeHeadX - 10 && this.yCor[i] == snakeHeadY) {
-                        right = -1;
+                    if (this.xCor[i] < snakeHeadX  && this.yCor[i] == snakeHeadY) {
+                        right = (snakeHeadX - this.xCor[i]) / this.canvasWidth;
                         break;
                     }
                 }
-
-                if (snakeHeadX - 10 == 0)
-                    right = -1;      
+				
+				//Right: Wall?                
+                rightWall = snakeHeadX / this.canvasWidth;      
                     
-                //Ahead
-                if (this.apple.x == snakeHeadX && this.apple.y == snakeHeadY + 10)
-                    ahead= 1;
-                
+                //Ahead: Body?                
                 for (let i = this.numSegments - 2; i >=0; i--){
-                    if (this.xCor[i] == snakeHeadX && this.yCor[i] == snakeHeadY + 10) {
-                        ahead = -1;
+                    if (this.xCor[i] == snakeHeadX && this.yCor[i] > snakeHeadY) {
+                        ahead = (this.yCor[i] - snakeHeadY) / this.canvasHeight;
                         break;
                     }
                 }
+	
+				//Ahead: Wall?                
+				aheadWall = (this.canvasHeight - snakeHeadY) / this.canvasHeight;                        
 
-                if (snakeHeadY + 10 == this.canvasHeight)
-                    ahead = -1;  
-
-                break; 
+                break;
 
             case this.DIRECTIONS.left:              
-                //Left
-                if (this.apple.x == snakeHeadX  && this.apple.y == snakeHeadY + 10)
-                    left = 1;
-                
+				//Calculate the angle between the snake direction vector and the apple vector
+				snakeDirVect = createVector(0, -snakeHeadX);				
+				appleAngle = degrees(snakeDirVect.angleBetween(appleVect)) / 180;
+				if (this.apple.y > snakeHeadY)
+					appleAngle = -appleAngle;
+				
+				//Left: Body?
                 for (let i = this.numSegments - 2; i >=0; i--){
-                    if (this.xCor[i] == snakeHeadX && this.yCor[i] == snakeHeadY + 10) {
-                        left = -1;
+                    if (this.xCor[i] == snakeHeadX && this.yCor[i] > snakeHeadY) {
+                        left = (this.yCor[i] - snakeHeadY) / this.canvasHeight;
                         break;
                     }
                 }
                 
-                if (snakeHeadY + 10 == this.canvasHeight)
-                    left = -1;
+				//Left: Wall?
+				leftWall = (this.canvasHeight - snakeHeadY) / this.canvasHeight;
 
-                //Right
-                if (this.apple.x == snakeHeadX && this.apple.y == snakeHeadY - 10)
-                    right= 1;
-                
+                //Right: Body?                
                 for (let i = this.numSegments - 2; i >=0; i--){
-                    if (this.xCor[i] == snakeHeadX && this.yCor[i] == snakeHeadY - 10) {                        
-                        right = -1;
+                    if (this.xCor[i] == snakeHeadX  && this.yCor[i] < snakeHeadY) {
+                        right = (snakeHeadY - this.yCor[i]) / this.canvasHeight;
                         break;
                     }
                 }
-
-                if (snakeHeadY - 10 == 0)
-                    right = -1;      
+				
+				//Right: Wall?                
+				rightWall = snakeHeadY / this.canvasHeight;      
                     
-                //Ahead
-                if (this.apple.x == snakeHeadX - 10 && this.apple.y == snakeHeadY)
-                    ahead= 1;
-                
+                //Ahead: Body?                
                 for (let i = this.numSegments - 2; i >=0; i--){
-                    if (this.xCor[i] == snakeHeadX - 10 && this.yCor[i] == snakeHeadY) {
-                        ahead = -1;
+                    if (this.xCor[i] < snakeHeadX && this.yCor[i] == snakeHeadY) {
+                        ahead = (snakeHeadX - this.xCor[i]) / this.canvasWidth;
                         break;
                     }
                 }
+	
+				//Ahead: Wall?                
+				aheadWall = snakeHeadX / this.canvasWidth;                        
 
-                if (snakeHeadX - 10 == 0)
-                    ahead = -1;                                         
-
-                break;             
+                break;              
         }        
 
-        appleDist = 1 / appleDist;
-
         let prediction = [];
-        prediction = this.brain.feedForward([ahead, left, right, appleDist]);
+        prediction = this.brain.feedForward([ahead, aheadWall, left, leftWall, right, rightWall, appleAngle]);
                 
         index = Math.max(...prediction);
         index = prediction.findIndex(element => { return element == index }) + 1;
