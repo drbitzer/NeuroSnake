@@ -74,7 +74,7 @@ class Snake {
         this.timeWOEat++;
         if ( this.timeWOEat / 10 >= 40 ){
             this.isAlive = false;
-            this.score -= (this.score * 80 / 100);
+            //this.score -= (this.score * 80 / 100);
             return;
         }      
         
@@ -361,7 +361,7 @@ class Snake {
         this.xCor.unshift(this.xCor[0]);
         this.yCor.unshift(this.yCor[0]);
         this.numSegments++;  
-        this.apples += 10;    
+        this.apples += 1000;    
         this.timeWOEat = 0;
 
         this.color[1] -= 10;
