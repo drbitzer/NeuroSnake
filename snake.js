@@ -74,7 +74,7 @@ class Snake {
         this.timeWOEat++;
         if ( this.timeWOEat / 10 >= 40 ){
             this.isAlive = false;
-            //this.score -= (this.score * 40 / 100);
+            this.score -= (this.score * 40 / 100);
             return;
         }      
         
@@ -100,8 +100,13 @@ class Snake {
         switch(this.direction) {
             case this.DIRECTIONS.up:
 				//Calculate the angle between the snake direction vector and the apple vector
-				snakeDirVect = createVector(0, -snakeHeadY);				
-				appleAngle = degrees(snakeDirVect.angleBetween(appleVect)) / 180;
+                snakeDirVect = createVector(0, -snakeHeadY);				
+                
+                if (!snakeDirVect.equals(0,0))
+                    appleAngle = degrees(snakeDirVect.angleBetween(appleVect)) / 180;
+                else
+                    appleAngle = degrees(appleVect.heading()) / 180;
+                
 				if (this.apple.x < snakeHeadX)
 					appleAngle = -appleAngle;
 				
@@ -142,8 +147,13 @@ class Snake {
 
             case this.DIRECTIONS.right:  
 				//Calculate the angle between the snake direction vector and the apple vector
-				snakeDirVect = createVector(0, snakeHeadX);				
-				appleAngle = degrees(snakeDirVect.angleBetween(appleVect)) / 180;
+                snakeDirVect = createVector(snakeHeadX, 0);	
+                
+                if (!snakeDirVect.equals(0,0))
+                    appleAngle = degrees(snakeDirVect.angleBetween(appleVect)) / 180;
+                else
+                    appleAngle = degrees(appleVect.heading()) / 180;                
+                
 				if (this.apple.y < snakeHeadY)
 					appleAngle = -appleAngle;
 				
@@ -184,8 +194,13 @@ class Snake {
 
             case this.DIRECTIONS.down:
 				//Calculate the angle between the snake direction vector and the apple vector
-				snakeDirVect = createVector(0, snakeHeadY);				
-				appleAngle = degrees(snakeDirVect.angleBetween(appleVect)) / 180;
+                snakeDirVect = createVector(0, snakeHeadY);	
+                            
+                if (!snakeDirVect.equals(0,0))
+                    appleAngle = degrees(snakeDirVect.angleBetween(appleVect)) / 180;
+                else
+                    appleAngle = degrees(appleVect.heading()) / 180;                
+                
 				if (this.apple.x > snakeHeadX)
 					appleAngle = -appleAngle;
 				
@@ -226,8 +241,13 @@ class Snake {
 
             case this.DIRECTIONS.left:              
 				//Calculate the angle between the snake direction vector and the apple vector
-				snakeDirVect = createVector(0, -snakeHeadX);				
-				appleAngle = degrees(snakeDirVect.angleBetween(appleVect)) / 180;
+                snakeDirVect = createVector(-snakeHeadX, 0);
+                				
+                if (!snakeDirVect.equals(0,0))
+                    appleAngle = degrees(snakeDirVect.angleBetween(appleVect)) / 180;
+                else
+                    appleAngle = degrees(appleVect.heading()) / 180;                
+                
 				if (this.apple.y > snakeHeadY)
 					appleAngle = -appleAngle;
 				

@@ -17,10 +17,12 @@ class Apple{
         this.y = this.y - (this.y % this.unit);
     }
 
-    update() {
+    update(draw) {
 
-        stroke(255, 0, 0);        
-        point(this.x, this.y);        
+        if (draw) {
+            stroke(255, 0, 0);        
+            point(this.x, this.y);        
+        }
         
     }
 
