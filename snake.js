@@ -50,7 +50,7 @@ class Snake {
         if (snake) {
             this.brain = snake.brain.copy();
         } else {
-            this.brain = new NeuralNetwork(7, 49, 3);
+            this.brain = new NeuralNetwork(7, 25, 3);
         }
         
         this.apple = null;
@@ -285,15 +285,15 @@ class Snake {
 				aheadWall = snakeHeadX / this.canvasWidth;                        
 
                 break;              
-        }        
-
+        }      
+		
         let prediction = [];
-        prediction = this.brain.feedForward([ahead, aheadWall, left, leftWall, right, rightWall, appleAngle]);
+        prediction = this.brain.feedForward([ahead, aheadWall, left, leftWall, right, rightWall, appleAngle]); 
                 
         index = Math.max(...prediction);
-        index = prediction.findIndex(element => { return element == index }) + 1;
+        index = prediction.findIndex(element => { return element == index }) + 1; 
 
-        switch(index) {
+         switch(index) {
             case this.ACTION.ahead:
                 this.turn(this.direction);
                 break;
