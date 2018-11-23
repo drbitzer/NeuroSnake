@@ -51,7 +51,7 @@ class Snake {
         if (snake) {
             this.brain = snake.brain.copy();
         } else {
-            this.brain = new NeuralNetwork(7, 25, 3);
+            this.brain = new NeuralNetwork(9, 81, 3);
         }
         
         this.apple = null;
@@ -89,10 +89,12 @@ class Snake {
         let appleDist = Math.sqrt( ( Math.pow(this.apple.x - snakeHeadX, 2) + 
                                      Math.pow(this.apple.y - snakeHeadY, 2) ) );                                                                          
 
-        let left = 0;
-        let right = 0;
-        let ahead = 0;
-		let appleAngle = 0;			
+        let left =  1;
+        let right = 1;
+        let ahead = 1;
+        let appleAngleLeft = 0;			
+        let appleAngleRight = 0;
+        let appleAngleAhead = 0;
 		let aheadWall = 0;
 		let rightWall = 0;
 		let leftWall = 0;
@@ -102,16 +104,37 @@ class Snake {
         let index = 0;
         switch(this.direction) {
             case this.DIRECTIONS.up:
-				//Calculate the angle between the snake direction vector and the apple vector
-                snakeDirVect = createVector(0, -snakeHeadY);				
+                //Calculate the angle between the snake direction vector and the apple vector
                 
+                //Apple Angle Ahead
+                snakeDirVect = createVector(0, -snakeHeadY);				                
                 if (!snakeDirVect.equals(0,0))
-                    appleAngle = degrees(snakeDirVect.angleBetween(appleVect)) / 180;
+                    appleAngleAhead = degrees(snakeDirVect.angleBetween(appleVect)) / 180;
                 else
-                    appleAngle = degrees(appleVect.heading()) / 180;
+                    appleAngleAhead = degrees(appleVect.heading()) / 180;
                 
 				if (this.apple.x < snakeHeadX)
-					appleAngle = -appleAngle;
+                    appleAngleAhead = -appleAngleAhead;
+                    
+                //Apple Angle Left
+                snakeDirVect = createVector(-snakeHeadX, 0);				                
+                if (!snakeDirVect.equals(0,0))
+                    appleAngleLeft = degrees(snakeDirVect.angleBetween(appleVect)) / 180;
+                else
+                    appleAngleLeft = degrees(appleVect.heading()) / 180;
+                
+				if (this.apple.y > snakeHeadY)
+                    appleAngleLeft = -appleAngleLeft;    
+                    
+                //Apple Angle Right
+                snakeDirVect = createVector(snakeHeadX, 0);				                
+                if (!snakeDirVect.equals(0,0))
+                    appleAngleRight = degrees(snakeDirVect.angleBetween(appleVect)) / 180;
+                else
+                    appleAngleRight = degrees(appleVect.heading()) / 180;
+                
+				if (this.apple.y < snakeHeadY)
+                    appleAngleRight = -appleAngleRight;                       
 				
 				//Left: Body?
                 for (let i = this.numSegments - 2; i >=0; i--){
@@ -149,16 +172,37 @@ class Snake {
                 break;
 
             case this.DIRECTIONS.right:  
-				//Calculate the angle between the snake direction vector and the apple vector
-                snakeDirVect = createVector(snakeHeadX, 0);	
-                
+				//Calculate the angle between the snake direction vector and the apple vector                           
+                    
+                //Apple Angle Ahead
+                snakeDirVect = createVector(snakeHeadX, 0);	     
                 if (!snakeDirVect.equals(0,0))
-                    appleAngle = degrees(snakeDirVect.angleBetween(appleVect)) / 180;
+                    appleAngleAhead = degrees(snakeDirVect.angleBetween(appleVect)) / 180;
                 else
-                    appleAngle = degrees(appleVect.heading()) / 180;                
+                    appleAngleAhead = degrees(appleVect.heading()) / 180;                
                 
 				if (this.apple.y < snakeHeadY)
-					appleAngle = -appleAngle;
+                    appleAngleAhead = -appleAngleAhead;
+                    
+                //Apple Angle Left
+                snakeDirVect = createVector(0, -snakeHeadY);				                
+                if (!snakeDirVect.equals(0,0))
+                    appleAngleLeft = degrees(snakeDirVect.angleBetween(appleVect)) / 180;
+                else
+                    appleAngleLeft = degrees(appleVect.heading()) / 180;
+                
+				if (this.apple.x < snakeHeadX)
+                    appleAngleLeft = -appleAngleLeft;    
+                    
+                //Apple Angle Right
+                snakeDirVect = createVector(0, snakeHeadY);				                
+                if (!snakeDirVect.equals(0,0))
+                    appleAngleRight = degrees(snakeDirVect.angleBetween(appleVect)) / 180;
+                else
+                    appleAngleRight = degrees(appleVect.heading()) / 180;
+                
+				if (this.apple.x > snakeHeadX)
+                    appleAngleRight = -appleAngleRight;                      
 				
 				//Left: Body?
                 for (let i = this.numSegments - 2; i >= 0; i--){
@@ -196,16 +240,36 @@ class Snake {
                 break;               
 
             case this.DIRECTIONS.down:
-				//Calculate the angle between the snake direction vector and the apple vector
-                snakeDirVect = createVector(0, snakeHeadY);	
-                            
+				//Calculate the angle between the snake direction vector and the apple vector                    
+                //Apple Angle Ahead
+                snakeDirVect = createVector(0, snakeHeadY);	                            
                 if (!snakeDirVect.equals(0,0))
-                    appleAngle = degrees(snakeDirVect.angleBetween(appleVect)) / 180;
+                    appleAngleAhead = degrees(snakeDirVect.angleBetween(appleVect)) / 180;
                 else
-                    appleAngle = degrees(appleVect.heading()) / 180;                
+                    appleAngleAhead = degrees(appleVect.heading()) / 180;                
                 
 				if (this.apple.x > snakeHeadX)
-					appleAngle = -appleAngle;
+                    appleAngleAhead = -appleAngleAhead;
+                    
+                //Apple Angle Left
+                snakeDirVect = createVector(snakeHeadX, 0);				                
+                if (!snakeDirVect.equals(0,0))
+                    appleAngleLeft = degrees(snakeDirVect.angleBetween(appleVect)) / 180;
+                else
+                    appleAngleLeft = degrees(appleVect.heading()) / 180;
+                
+				if (this.apple.y < snakeHeadY)
+                    appleAngleLeft = -appleAngleLeft;    
+                    
+                //Apple Angle Right
+                snakeDirVect = createVector(-snakeHeadX, 0);				                
+                if (!snakeDirVect.equals(0,0))
+                    appleAngleRight = degrees(snakeDirVect.angleBetween(appleVect)) / 180;
+                else
+                    appleAngleRight = degrees(appleVect.heading()) / 180;
+                
+				if (this.apple.y > snakeHeadY)
+                    appleAngleRight = -appleAngleRight;                        
 				
 				//Left: Body?
                 for (let i = this.numSegments - 2; i >=0; i--){
@@ -243,16 +307,36 @@ class Snake {
                 break;
 
             case this.DIRECTIONS.left:              
-				//Calculate the angle between the snake direction vector and the apple vector
-                snakeDirVect = createVector(-snakeHeadX, 0);
-                				
+				//Calculate the angle between the snake direction vector and the apple vector                
+                //Apple Angle Ahead
+                snakeDirVect = createVector(-snakeHeadX, 0);                				
                 if (!snakeDirVect.equals(0,0))
-                    appleAngle = degrees(snakeDirVect.angleBetween(appleVect)) / 180;
+                    appleAngleAhead = degrees(snakeDirVect.angleBetween(appleVect)) / 180;
                 else
-                    appleAngle = degrees(appleVect.heading()) / 180;                
+                    appleAngleAhead = degrees(appleVect.heading()) / 180;                
                 
 				if (this.apple.y > snakeHeadY)
-					appleAngle = -appleAngle;
+                    appleAngleAhead = -appleAngleAhead;
+                    
+                //Apple Angle Left
+                snakeDirVect = createVector(0, snakeHeadY);				                
+                if (!snakeDirVect.equals(0,0))
+                    appleAngleLeft = degrees(snakeDirVect.angleBetween(appleVect)) / 180;
+                else
+                    appleAngleLeft = degrees(appleVect.heading()) / 180;
+                
+				if (this.apple.x > snakeHeadX)
+                    appleAngleLeft = -appleAngleLeft;    
+                    
+                //Apple Angle Right
+                snakeDirVect = createVector(0, -snakeHeadY);				                
+                if (!snakeDirVect.equals(0,0))
+                    appleAngleRight = degrees(snakeDirVect.angleBetween(appleVect)) / 180;
+                else
+                    appleAngleRight = degrees(appleVect.heading()) / 180;
+                
+				if (this.apple.x < snakeHeadX)
+                    appleAngleRight = -appleAngleRight                                             
 				
 				//Left: Body?
                 for (let i = this.numSegments - 2; i >=0; i--){
@@ -291,7 +375,9 @@ class Snake {
         }      
 		
         let prediction = [];
-        prediction = this.brain.feedForward([ahead, aheadWall, left, leftWall, right, rightWall, appleAngle]); 
+        prediction = this.brain.feedForward([ahead, aheadWall, appleAngleAhead, 
+                                             left, leftWall, appleAngleLeft,
+                                             right, rightWall, appleAngleRight]); 
                 
         index = Math.max(...prediction);
         index = prediction.findIndex(element => { return element == index }) + 1; 
