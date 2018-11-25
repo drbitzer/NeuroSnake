@@ -89,9 +89,9 @@ class Snake {
         let appleDist = Math.sqrt( ( Math.pow(this.apple.x - snakeHeadX, 2) + 
                                      Math.pow(this.apple.y - snakeHeadY, 2) ) );                                                                          
 
-        let left =  1;
-        let right = 1;
-        let ahead = 1;
+        let left =  -1;
+        let right = -1;
+        let ahead = -1;
         let appleAngleLeft = 0;			
         let appleAngleRight = 0;
         let appleAngleAhead = 0;
